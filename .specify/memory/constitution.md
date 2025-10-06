@@ -1,50 +1,76 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+# Two Ball Breakout Static Web App Constitution
+<!-- Sync Impact Report is maintained at top of this file. -->
+
+<!--
+Version change: 0.0.0 → 1.0.0
+Modified principles: N/A (template → concrete)
+Added sections: Core Principles, Additional Constraints, Development Workflow, Governance
+Removed sections: Template comments and placeholder tokens
+Templates requiring updates:
+✅ .specify/templates/plan-template.md (footer reference/version label)
+✅ .specify/templates/spec-template.md (no conflicting mandates)
+✅ .specify/templates/tasks-template.md (aligns with TDD and web structure)
+✅ .specify/templates/agent-file-template.md (generic; no change required)
+Follow-up TODOs: TODO(RATIFICATION_DATE): Original adoption date unknown; set when known
+-->
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Static-First Delivery (NON-NEGOTIABLE)
+The application MUST be served as static assets (HTML/CSS/JS) without a
+custom backend service. All dynamic needs MUST be satisfied via:
+- Pre-rendered content at build time
+- Client-side logic
+- Third-party APIs with simple, documented contracts
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+Rationale: Static hosting minimizes cost, operational risk, and complexity.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### II. TDD and Quick Feedback
+Tests MUST be authored before implementation for all logic that can be
+unit-tested. Critical paths MUST have integration-level checks via headless
+browser or DOM tests. CI MUST run tests on every change.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+Rationale: Prevents regressions and anchors design in user-observable behavior.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### III. Simplicity over Framework Bloat
+Prefer zero/low-dependency solutions. If a framework is used, it MUST justify
+bundle size and complexity with measurable benefit. Remove unused dependencies
+promptly.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+Rationale: Smaller bundles improve performance and maintainability.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+## Additional Constraints
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+- Hosting: Static hosting (e.g., GitHub Pages, Netlify, Vercel static). No
+  custom servers.
+- Build: Single deterministic build command. Output directory MUST be
+  configurable via environment.
+- Security: No secret keys in client code. Third-party API calls MUST use
+  public-safe tokens or serverless proxies owned by the provider.
+- Analytics: Privacy-friendly analytics only; no PII collection.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+## Development Workflow
+
+1. Write or update tests for the user-visible change.
+2. Implement minimal code to satisfy tests.
+3. Run accessibility and performance checks locally.
+4. Open PR: CI runs tests, budgets, and linting; require green CI to merge.
+5. Deploy via static hosting preview, then promote to production.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+- Authority: This constitution supersedes other process docs for the static web
+  app scope.
+- Amendments: Proposals MUST include rationale, impact on budgets and
+  accessibility, and migration considerations. Approval requires maintainer
+  consensus and version bump according to policy below.
+- Versioning Policy: Semantic versioning of this constitution.
+  - MAJOR: Backward-incompatible governance or principle changes.
+  - MINOR: New principles/sections or material expansions.
+  - PATCH: Clarifications and wording fixes only.
+- Compliance: PR reviewers MUST verify alignment with principles, workflow, and
+  constraints. Deviations require documented justification in the plan's
+  Complexity Tracking.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: TODO(RATIFICATION_DATE): Original adoption date unknown | **Last Amended**: 2025-10-06
+<!-- Version: 1.0.0 | Ratified: TODO | Last Amended: 2025-10-06 -->

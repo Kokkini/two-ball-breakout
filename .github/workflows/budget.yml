@@ -1,0 +1,28 @@
+name: Performance Budget Check
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  budget:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Check bundle size
+        run: |
+          TOTAL=$(find scripts -name "*.js" -exec wc -c {} + | tail -1 | awk '{print $1}')
+          echo "Total JS bundle size: $TOTAL bytes"
+          if [ "$TOTAL" -gt 204800 ]; then
+            echo "ERROR: Bundle exceeds 200KB gzip budget"
+            exit 1
+          fi
+      - name: Check asset size
+        run: |
+          P5_SIZE=$(wc -c < assets/vendor/p5.min.js)
+          echo "p5.js size: $P5_SIZE bytes"
+          if [ "$P5_SIZE" -gt 1048576 ]; then
+            echo "WARNING: p5.js exceeds 1MB"
+          fi
+

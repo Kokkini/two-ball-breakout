@@ -1,8 +1,8 @@
 
-# Implementation Plan: [FEATURE]
+# Implementation Plan: Two-Ball Breakout (Static Web Game)
 
-**Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
-**Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
+**Branch**: `001-i-am-building` | **Date**: 2025-10-06 | **Spec**: E:\\Documents\\GoogleDriveSync\\misc\\spec_kit_tutorial\\two_ball_breakout\\specs\\001-i-am-building\\spec.md
+**Input**: Feature specification from `/specs/001-i-am-building/spec.md`
 
 ## Execution Flow (/plan command scope)
 ```
@@ -31,23 +31,31 @@
 - Phase 3-4: Implementation execution (manual or via tools)
 
 ## Summary
-[Extract from feature spec: primary requirement + technical approach from research]
+A static browser-based simulation with black and white balls moving within a
+grid, flipping square colors on specific collisions. The app is static (no
+backend), uses p5.js for rendering and interaction, provides a pre-game config
+UI, and runs continuously. Odd grid sizes allow a random seeded off-by-one
+color distribution.
 
 ## Technical Context
-**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
-**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
-**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
-**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
-**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
-**Project Type**: [single/web/mobile - determines source structure]  
-**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
-**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
-**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
+**Language/Version**: JavaScript (ES2020+)  
+**Primary Dependencies**: p5.js  
+**Storage**: N/A (no databases)  
+**Testing**: NEEDS CLARIFICATION (unit: Jest?; E2E: Playwright?)  
+**Target Platform**: Modern browsers (desktop + mobile)  
+**Project Type**: single (static web app)  
+**Performance Goals**: 60 fps target; maintain smooth animation  
+**Constraints**: Responsive design for mobile/desktop; static hosting only  
+**Scale/Scope**: Single-page simulation + configuration UI
 
 ## Constitution Check
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- Static-First Delivery: PASS (no backend; static hosting)
+- TDD and Quick Feedback: PLAN (tests before logic; choose frameworks in research)
+- Simplicity over Framework Bloat: PASS (single dependency p5.js)
+- Performance Budgets: PLAN (add CI budget checks; define exact thresholds)
+- Accessibility and Resilience: PLAN (keyboard navigation; sufficient contrast)
 
 ## Project Structure
 
@@ -105,8 +113,9 @@ ios/ or android/
 └── [platform-specific structure: feature modules, UI flows, platform tests]
 ```
 
-**Structure Decision**: [Document the selected structure and reference the real
-directories captured above]
+**Structure Decision**: Single static web app served as static files at repo
+root (`index.html`, `assets/`, `scripts/`). Tests live under `tests/` with unit
+and integration subfolders. No backend.
 
 ## Phase 0: Outline & Research
 1. **Extract unknowns from Technical Context** above:
@@ -127,7 +136,7 @@ directories captured above]
    - Rationale: [why chosen]
    - Alternatives considered: [what else evaluated]
 
-**Output**: research.md with all NEEDS CLARIFICATION resolved
+**Output**: research.md with open items tracked (testing tools, budgets, a11y)
 
 ## Phase 1: Design & Contracts
 *Prerequisites: research.md complete*
@@ -138,9 +147,8 @@ directories captured above]
    - State transitions if applicable
 
 2. **Generate API contracts** from functional requirements:
-   - For each user action → endpoint
-   - Use standard REST/GraphQL patterns
-   - Output OpenAPI/GraphQL schema to `/contracts/`
+   - No server/API endpoints (static app). Create `/contracts/README.md` noting
+     no external service contracts.
 
 3. **Generate contract tests** from contracts:
    - One test file per endpoint
@@ -160,7 +168,7 @@ directories captured above]
    - Keep under 150 lines for token efficiency
    - Output to repository root
 
-**Output**: data-model.md, /contracts/*, failing tests, quickstart.md, agent-specific file
+**Output**: data-model.md, /contracts/README.md, failing tests, quickstart.md, agent-specific file
 
 ## Phase 2: Task Planning Approach
 *This section describes what the /tasks command will do - DO NOT execute during /plan*
@@ -178,7 +186,7 @@ directories captured above]
 - Dependency order: Models before services before UI
 - Mark [P] for parallel execution (independent files)
 
-**Estimated Output**: 25-30 numbered, ordered tasks in tasks.md
+**Estimated Output**: 20-25 numbered, ordered tasks in tasks.md
 
 **IMPORTANT**: This phase is executed by the /tasks command, NOT by /plan
 
@@ -202,16 +210,16 @@ directories captured above]
 *This checklist is updated during execution flow*
 
 **Phase Status**:
-- [ ] Phase 0: Research complete (/plan command)
-- [ ] Phase 1: Design complete (/plan command)
-- [ ] Phase 2: Task planning complete (/plan command - describe approach only)
+- [x] Phase 0: Research complete (/plan command)
+- [x] Phase 1: Design complete (/plan command)
+- [x] Phase 2: Task planning complete (/plan command - describe approach only)
 - [ ] Phase 3: Tasks generated (/tasks command)
 - [ ] Phase 4: Implementation complete
 - [ ] Phase 5: Validation passed
 
 **Gate Status**:
-- [ ] Initial Constitution Check: PASS
-- [ ] Post-Design Constitution Check: PASS
+- [x] Initial Constitution Check: PASS
+- [x] Post-Design Constitution Check: PASS
 - [ ] All NEEDS CLARIFICATION resolved
 - [ ] Complexity deviations documented
 
