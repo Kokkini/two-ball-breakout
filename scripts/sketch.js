@@ -13,9 +13,13 @@ let squareSize = 20;
 let lastFrameTime = 0;
 
 const themes = {
-  classic: { black: '#000000', white: '#FFFFFF', ball: '#FF0000' },
-  ocean: { black: '#003366', white: '#66CCCC', ball: '#FF6600' },
-  sunset: { black: '#663399', white: '#FF9933', ball: '#FFFF00' },
+  classic: { black: '#2C2C2C', white: '#E8E8E8', ball: '#D32F2F' },
+  ocean: { black: '#1B4965', white: '#BEE9E8', ball: '#FF6B35' },
+  sunset: { black: '#5C2E7E', white: '#FFBA49', ball: '#FF5E5B' },
+  forest: { black: '#2D4538', white: '#A8DADC', ball: '#E63946' },
+  candy: { black: '#D81159', white: '#FFBC42', ball: '#8F2D56' },
+  holiday: { black: '#C41E3A', white: '#2D5F3F', ball: '#FFD700' },
+  luxury: { black: '#1A1A1D', white: '#D4AF37', ball: '#C0C0C0' },
 };
 
 function setup() {
@@ -45,7 +49,7 @@ function draw() {
   // Draw grid
   for (let cell of grid.cells) {
     fill(cell.color === 'black' ? theme.black : theme.white);
-    stroke(200);
+    noStroke();
     rect(cell.x * squareSize, cell.y * squareSize, squareSize, squareSize);
   }
 
@@ -58,45 +62,101 @@ function draw() {
     for (let ball of window.gameState.balls) {
       ball.update(deltaTime);
 
-      // Check wall collisions
-      if (ball.position.x <= 0 || ball.position.x >= grid.width) {
+      const radius = ball.radius || 0.3;
+
+      // Check wall collisions (ball boundary, not center)
+      if (ball.position.x - radius <= 0) {
         ball.velocity = reflectX(ball.velocity);
-        ball.position.x = Math.max(0, Math.min(grid.width, ball.position.x));
+        ball.position.x = radius;
       }
-      if (ball.position.y <= 0 || ball.position.y >= grid.height) {
+      if (ball.position.x + radius >= grid.width) {
+        ball.velocity = reflectX(ball.velocity);
+        ball.position.x = grid.width - radius;
+      }
+      if (ball.position.y - radius <= 0) {
         ball.velocity = reflectY(ball.velocity);
-        ball.position.y = Math.max(0, Math.min(grid.height, ball.position.y));
+        ball.position.y = radius;
+      }
+      if (ball.position.y + radius >= grid.height) {
+        ball.velocity = reflectY(ball.velocity);
+        ball.position.y = grid.height - radius;
       }
 
       // Check square boundary collisions and flip color
-      const cellX = Math.floor(ball.position.x);
-      const cellY = Math.floor(ball.position.y);
-      const cell = grid.getCellAt(cellX, cellY);
+      // Get all cells the ball overlaps with (considering radius)
+      const minCellX = Math.max(0, Math.floor(ball.position.x - radius));
+      const maxCellX = Math.min(grid.width - 1, Math.floor(ball.position.x + radius));
+      const minCellY = Math.max(0, Math.floor(ball.position.y - radius));
+      const maxCellY = Math.min(grid.height - 1, Math.floor(ball.position.y + radius));
 
-      if (cell && shouldFlip(ball.color, cell.color)) {
-        // Determine collision edge (simplified: check velocity direction)
-        const relX = ball.position.x - cellX;
-        const relY = ball.position.y - cellY;
-        if (relX < 0.1 || relX > 0.9) {
-          ball.velocity = reflectX(ball.velocity);
+      for (let cy = minCellY; cy <= maxCellY; cy++) {
+        for (let cx = minCellX; cx <= maxCellX; cx++) {
+          const cell = grid.getCellAt(cx, cy);
+          if (!cell || !shouldFlip(ball.color, cell.color)) continue;
+
+          // Check if ball boundary overlaps with cell boundaries
+          const cellLeft = cx;
+          const cellRight = cx + 1;
+          const cellTop = cy;
+          const cellBottom = cy + 1;
+
+          let collided = false;
+          let reflectXAxis = false;
+          let reflectYAxis = false;
+
+          // Check horizontal edges (left and right)
+          if (ball.velocity.x > 0 && ball.position.x + radius >= cellLeft && ball.position.x - radius < cellLeft) {
+            // Approaching from left
+            if (ball.position.y >= cellTop && ball.position.y <= cellBottom) {
+              reflectXAxis = true;
+              collided = true;
+              ball.position.x = cellLeft - radius;
+            }
+          } else if (ball.velocity.x < 0 && ball.position.x - radius <= cellRight && ball.position.x + radius > cellRight) {
+            // Approaching from right
+            if (ball.position.y >= cellTop && ball.position.y <= cellBottom) {
+              reflectXAxis = true;
+              collided = true;
+              ball.position.x = cellRight + radius;
+            }
+          }
+
+          // Check vertical edges (top and bottom)
+          if (ball.velocity.y > 0 && ball.position.y + radius >= cellTop && ball.position.y - radius < cellTop) {
+            // Approaching from top
+            if (ball.position.x >= cellLeft && ball.position.x <= cellRight) {
+              reflectYAxis = true;
+              collided = true;
+              ball.position.y = cellTop - radius;
+            }
+          } else if (ball.velocity.y < 0 && ball.position.y - radius <= cellBottom && ball.position.y + radius > cellBottom) {
+            // Approaching from bottom
+            if (ball.position.x >= cellLeft && ball.position.x <= cellRight) {
+              reflectYAxis = true;
+              collided = true;
+              ball.position.y = cellBottom + radius;
+            }
+          }
+
+          if (collided) {
+            if (reflectXAxis) ball.velocity = reflectX(ball.velocity);
+            if (reflectYAxis) ball.velocity = reflectY(ball.velocity);
+            cell.color = flipColor(cell.color);
+          }
         }
-        if (relY < 0.1 || relY > 0.9) {
-          ball.velocity = reflectY(ball.velocity);
-        }
-        cell.color = flipColor(cell.color);
       }
     }
   }
 
   // Draw balls
   for (let ball of window.gameState.balls) {
+    const radius = ball.radius || 0.3;
     fill(ball.color === 'black' ? theme.black : theme.white);
-    stroke(theme.ball);
-    strokeWeight(2);
+    noStroke();
     ellipse(
       ball.position.x * squareSize,
       ball.position.y * squareSize,
-      squareSize * 0.6
+      radius * 2 * squareSize // diameter = 2 * radius
     );
   }
 }

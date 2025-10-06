@@ -75,17 +75,21 @@ rules so that the motion and visual transformation continue indefinitely.
 2. **Given** a black ball moving through the grid, **When** it crosses a white
    square interior, **Then** it moves freely without bouncing and the square's
    color remains unchanged.
-3. **Given** a black ball moving toward a black square boundary, **When** it
-   collides with the black square boundary, **Then** it bounces (angle of
-   reflection equals angle of incidence per elastic collision with axis-aligned
-   edges) and the impacted black square turns white.
-4. **Given** a white ball moving toward a white square boundary, **When** it
-   collides, **Then** it bounces and the impacted white square turns black.
-5. **Given** a ball moving toward a wall (outer boundary), **When** it
-   collides, **Then** it bounces with no color change.
-6. **Given** pre-game configuration is shown, **When** the player edits theme,
-   grid size, angles, counts, and speed, **Then** the preview updates values
-   and the Start button initializes a new simulation with those settings.
+3. **Given** a black ball moving toward a black square boundary, **When** the
+   ball's boundary (considering its radius) collides with the black square
+   boundary, **Then** it bounces (angle of reflection equals angle of incidence
+   per elastic collision with axis-aligned edges) and the impacted black square
+   turns white.
+4. **Given** a white ball moving toward a white square boundary, **When** the
+   ball's boundary (considering its radius) collides, **Then** it bounces and
+   the impacted white square turns black.
+5. **Given** a ball moving toward a wall (outer boundary), **When** the ball's
+   boundary (considering its radius) collides, **Then** it bounces with no
+   color change.
+6. **Given** pre-game configuration is shown, **When** the player edits theme
+   (selecting from multiple complementary color palettes), grid size, angles,
+   counts, and speed, **Then** the preview updates values and the Start button
+   initializes a new simulation with those settings.
 
 ### Edge Cases
 - Grid initialization with odd W×H: Off-by-one allowed; use random seeded
@@ -94,7 +98,7 @@ rules so that the motion and visual transformation continue indefinitely.
 - Multiple balls simultaneous collision with the same square: Apply toggles per collision order within a tick
 - Ball-ball collisions: No collisions between balls, they just pass through
 - Corner collisions (wall + square corner): Resolve as double bounce
-- Starting positions: Randomly place black balls in white squares and white balls in black squares. The size of the ball should be smaller than the square.
+- Starting positions: Randomly place black balls in white squares and white balls in black squares. The ball radius is 0.3 grid squares (60% of square diameter), ensuring balls are smaller than squares.
 - Speed/angle units: Use degrees and squares-per-sec
 - Large grids and high ball counts: Ensure performance remains smooth within
   target devices.
@@ -103,25 +107,33 @@ rules so that the motion and visual transformation continue indefinitely.
 
 ### Functional Requirements
 - **FR-001**: System MUST provide a pre-game configuration UI to select
-  color theme, grid width (squares), grid height (squares), starting angle for
-  each ball color, number of balls per color, and ball speed.
+  color theme (from at least 7 options including Classic, Ocean, Sunset, Forest,
+  Candy, Holiday, and Luxury), grid width (squares), grid height (squares),
+  starting angle for each ball color, number of balls per color, and ball speed.
 - **FR-002**: On Start, the system MUST initialize a W×H grid targeting a 50/50
   split of black and white squares; when W×H is odd, allow off-by-one using a
   random seeded distribution to assign the extra square.
 - **FR-003**: The system MUST place each black ball initially on a white square
   and each white ball on a black square. Placement MUST avoid overlaps. If the number of balls is greater than the number of starting squares, remove the excess balls.
-- **FR-004**: Black ball motion: moves freely through white squares; bounces on
-  contact with walls and black square boundaries; upon bouncing off a black
-  square, that square MUST flip to white.
-- **FR-005**: White ball motion: moves freely through black squares; bounces on
-  contact with walls and white square boundaries; upon bouncing off a white
-  square, that square MUST flip to black.
+- **FR-004**: Black ball motion: moves freely through white squares; bounces
+  when the ball's boundary (radius 0.3 grid squares) contacts walls and black
+  square boundaries; upon bouncing off a black square, that square MUST flip to
+  white.
+- **FR-005**: White ball motion: moves freely through black squares; bounces
+  when the ball's boundary (radius 0.3 grid squares) contacts walls and white
+  square boundaries; upon bouncing off a white square, that square MUST flip to
+  black.
 - **FR-006**: The simulation MUST run continuously until paused or reset by the
   user; there is no win/lose state.
 - **FR-007**: The system MUST allow pause/resume and reset to reconfigure
   settings.
 - **FR-008**: The system MUST render the grid and balls using the selected
-  theme, ensuring sufficient contrast between squares and balls.
+  theme, ensuring sufficient contrast between squares and balls. All themes MUST
+  use complementary colors that are visually appealing and not harsh on the eyes.
+  The Classic theme MUST use softened black/white (#2C2C2C/#E8E8E8) rather than
+  pure black/white for reduced eye strain. Grid squares MUST be rendered without
+  border lines, and balls MUST be rendered without strokes for a clean, seamless
+  appearance.
 - **FR-009**: Wall collisions MUST preserve speed and reflect angle according
   to axis-aligned elastic reflection.
 - **FR-010**: Behavior for ball-ball collisions MUST be defined. [NEEDS
@@ -135,11 +147,12 @@ rules so that the motion and visual transformation continue indefinitely.
 - **FR-007**: System MUST retain user data for [NEEDS CLARIFICATION: retention period not specified]
 
 ### Key Entities *(include if feature involves data)*
-- **GameSettings**: gridWidth, gridHeight, theme, blackBallCount,
-  whiteBallCount, blackStartAngle, whiteStartAngle, ballSpeed, seed? (optional)
+- **GameSettings**: gridWidth, gridHeight, theme (classic|ocean|sunset|forest|
+  candy|holiday|luxury), blackBallCount, whiteBallCount, blackStartAngle,
+  whiteStartAngle, ballSpeed, seed? (optional)
 - **Grid**: width, height, cells (color: black|white)
 - **Cell**: x, y, color
-- **Ball**: color (black|white), position (x,y), velocity (angle, speed)
+- **Ball**: color (black|white), position (x,y), velocity (angle, speed), radius (0.3 grid squares)
 
 ---
 

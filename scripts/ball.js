@@ -1,13 +1,14 @@
 /**
  * Ball model
- * Represents position, velocity, color
+ * Represents position, velocity, color, radius
  */
 
 class Ball {
-  constructor(color, position, velocity) {
+  constructor(color, position, velocity, radius = 0.3) {
     this.color = color; // 'black' or 'white'
-    this.position = position; // { x, y }
-    this.velocity = velocity; // { x, y }
+    this.position = position; // { x, y } in grid coordinates
+    this.velocity = velocity; // { x, y } in grid squares/sec
+    this.radius = radius; // radius in grid squares (default 0.3 = 60% of square)
   }
 
   update(deltaTime) {
