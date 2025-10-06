@@ -16,9 +16,11 @@ function setupUI() {
     const blackStartAngle = parseInt(document.getElementById('blackStartAngle').value, 10);
     const whiteStartAngle = parseInt(document.getElementById('whiteStartAngle').value, 10);
     const ballSpeed = parseFloat(document.getElementById('ballSpeed').value);
+    const angleFluctuation = parseFloat(document.getElementById('angleFluctuation').value);
+    const initMode = document.getElementById('initMode').value;
     const seed = document.getElementById('seed').value.trim() || Date.now().toString();
 
-    window.gameState.grid = initializeGrid(gridWidth, gridHeight, seed);
+    window.gameState.grid = initializeGrid(gridWidth, gridHeight, seed, initMode);
     window.gameState.balls = initializeBalls(
       window.gameState.grid,
       blackBallCount,
@@ -26,8 +28,10 @@ function setupUI() {
       blackStartAngle,
       whiteStartAngle,
       ballSpeed,
-      seed
+      seed,
+      initMode
     );
+    window.gameState.angleFluctuation = angleFluctuation;
     window.gameState.running = true;
     window.gameState.paused = false;
 

@@ -61,10 +61,12 @@ When creating this spec from a user prompt:
 ## User Scenarios & Testing *(mandatory)*
 
 ### Primary User Story
-As a player, I want to configure the grid size, ball counts, ball starting
-angles, ball speed, and color theme, start the simulation, and watch black and
-white balls bounce within a grid while flipping square colors according to the
-rules so that the motion and visual transformation continue indefinitely.
+As a player, I want to configure the grid initialization mode (classic left/right
+divide or random distribution), grid size, ball counts, ball starting angles,
+ball speed, angle fluctuation, and color theme, start the simulation, and watch
+black and white balls bounce within a grid while flipping square colors according
+to the rules so that the motion and visual transformation continue indefinitely
+with dynamic, unpredictable movement.
 
 ### Acceptance Scenarios
 1. **Given** a configured grid of W×H squares with exactly half black and half
@@ -86,35 +88,60 @@ rules so that the motion and visual transformation continue indefinitely.
 5. **Given** a ball moving toward a wall (outer boundary), **When** the ball's
    boundary (considering its radius) collides, **Then** it bounces with no
    color change.
-6. **Given** pre-game configuration is shown, **When** the player edits theme
-   (selecting from multiple complementary color palettes), grid size, angles,
-   counts, and speed, **Then** the preview updates values and the Start button
-   initializes a new simulation with those settings.
+6. **Given** pre-game configuration is shown, **When** the player edits grid
+   initialization mode, theme (selecting from multiple complementary color
+   palettes), grid size, angles, counts, speed, and angle fluctuation, **Then**
+   the preview updates values and the Start button initializes a new simulation
+   with those settings.
+7. **Given** classic initialization mode is selected, **When** the simulation
+   starts, **Then** the grid is divided with left half all black and right half
+   all white, with balls randomly placed on their respective colored sides.
+8. **Given** random initialization mode is selected, **When** the simulation
+   starts, **Then** the grid has a seeded random 50/50 distribution of black and
+   white squares with balls randomly placed on appropriate colors.
+9. **Given** angle fluctuation is set to 0 degrees, **When** a ball collides
+   with a wall or square, **Then** it bounces with perfect elastic reflection
+   (angle of incidence equals angle of reflection).
+10. **Given** angle fluctuation is set to a non-zero value (e.g., 2 degrees),
+    **When** a ball collides, **Then** the reflection angle is randomly varied by
+    up to ±fluctuation degrees while preserving ball speed, creating less
+    predictable motion.
+11. **Given** the simulation is running, **When** squares flip colors, **Then**
+    a score indicator bar at the bottom of the canvas displays the current
+    percentage of black and white squares with a visual bar (left portion black,
+    right portion white) and percentage labels on each end.
 
 ### Edge Cases
-- Grid initialization with odd W×H: Off-by-one allowed; use random seeded
-  distribution.
-- Partition rule for half-black/half-white: Use random seeded distribution.
+- Grid initialization modes: Classic (left/right divide) or Random (seeded distribution)
+- Classic mode with odd width: Left side gets extra column if width is odd
+- Random mode with odd W×H: Off-by-one allowed; use random seeded distribution
 - Multiple balls simultaneous collision with the same square: Apply toggles per collision order within a tick
 - Ball-ball collisions: No collisions between balls, they just pass through
-- Corner collisions (wall + square corner): Resolve as double bounce
+- Corner collisions (wall + square corner): Resolve as double bounce with angle fluctuation applied
 - Starting positions: Randomly place black balls in white squares and white balls in black squares. The ball radius is 0.3 grid squares (60% of square diameter), ensuring balls are smaller than squares.
 - Speed/angle units: Use degrees and squares-per-sec
+- Angle fluctuation: Random variation applied to reflection angle ±maxFluctuation; ball speed preserved
+- Maximum angle fluctuation: Configurable 0-45 degrees; higher values create chaotic motion
 - Large grids and high ball counts: Ensure performance remains smooth within
   target devices.
 
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
-- **FR-001**: System MUST provide a pre-game configuration UI to select
-  color theme (from at least 7 options including Classic, Ocean, Sunset, Forest,
-  Candy, Holiday, and Luxury), grid width (squares), grid height (squares),
-  starting angle for each ball color, number of balls per color, and ball speed.
-- **FR-002**: On Start, the system MUST initialize a W×H grid targeting a 50/50
-  split of black and white squares; when W×H is odd, allow off-by-one using a
-  random seeded distribution to assign the extra square.
+- **FR-001**: System MUST provide a pre-game configuration UI to select grid
+  initialization mode (Classic or Random), color theme (from at least 7 options
+  including Classic, Ocean, Sunset, Forest, Candy, Holiday, and Luxury), grid
+  width (squares), grid height (squares), starting angle for each ball color,
+  number of balls per color, ball speed, and angle fluctuation (0-45 degrees,
+  default 2 degrees).
+- **FR-002**: On Start, the system MUST initialize a W×H grid according to the
+  selected mode. Classic mode MUST create a left/right divide (left half black,
+  right half white) using floor(width/2) as the midpoint. Random mode MUST
+  create a seeded random 50/50 distribution; when W×H is odd, allow off-by-one.
 - **FR-003**: The system MUST place each black ball initially on a white square
-  and each white ball on a black square. Placement MUST avoid overlaps. If the number of balls is greater than the number of starting squares, remove the excess balls.
+  and each white ball on a black square, using random placement within available
+  squares of the appropriate color. Placement MUST avoid overlaps. If the number
+  of balls is greater than the number of starting squares, remove the excess balls.
 - **FR-004**: Black ball motion: moves freely through white squares; bounces
   when the ball's boundary (radius 0.3 grid squares) contacts walls and black
   square boundaries; upon bouncing off a black square, that square MUST flip to
@@ -135,21 +162,36 @@ rules so that the motion and visual transformation continue indefinitely.
   border lines, and balls MUST be rendered without strokes for a clean, seamless
   appearance.
 - **FR-009**: Wall collisions MUST preserve speed and reflect angle according
-  to axis-aligned elastic reflection.
+  to axis-aligned elastic reflection, with optional random angle fluctuation
+  applied as configured by the user.
 - **FR-010**: Behavior for ball-ball collisions MUST be defined. [NEEDS
   CLARIFICATION: collide/elastically reflect vs pass-through]
 - **FR-011**: If two or more balls attempt to flip the same square within the
   same tick, the final color resolution should be a random coin flip.
 - **FR-012**: Starting positions MUST be reproducible for a given seed if randomness is used.
+- **FR-013**: The system MUST apply angle fluctuation on every collision (wall
+  or square boundary) when configured to a non-zero value. The fluctuation MUST
+  add a random angle variation of ±angleFluctuation degrees to the reflection
+  angle while preserving the ball's speed (magnitude of velocity vector).
+- **FR-014**: Angle fluctuation of 0 degrees MUST result in perfectly predictable
+  elastic reflections; higher values (up to 45 degrees) MUST create increasingly
+  chaotic and unpredictable ball trajectories.
+- **FR-015**: The system MUST display a score indicator bar positioned at the
+  bottom of the canvas showing the real-time distribution of black and white
+  squares. The bar MUST be visually divided with the left portion colored to
+  represent black squares and the right portion for white squares, with the
+  width of each portion proportional to the percentage of that color in the grid.
+  Percentage labels MUST be displayed at each end of the bar.
 
 *Example of marking unclear requirements:*
 - **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]
 - **FR-007**: System MUST retain user data for [NEEDS CLARIFICATION: retention period not specified]
 
 ### Key Entities *(include if feature involves data)*
-- **GameSettings**: gridWidth, gridHeight, theme (classic|ocean|sunset|forest|
-  candy|holiday|luxury), blackBallCount, whiteBallCount, blackStartAngle,
-  whiteStartAngle, ballSpeed, seed? (optional)
+- **GameSettings**: initMode (classic|random), gridWidth, gridHeight, theme
+  (classic|ocean|sunset|forest|candy|holiday|luxury), blackBallCount,
+  whiteBallCount, blackStartAngle, whiteStartAngle, ballSpeed, angleFluctuation
+  (0-45 degrees, default 2), seed? (optional)
 - **Grid**: width, height, cells (color: black|white)
 - **Cell**: x, y, color
 - **Ball**: color (black|white), position (x,y), velocity (angle, speed), radius (0.3 grid squares)

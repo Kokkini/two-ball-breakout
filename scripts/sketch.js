@@ -7,6 +7,7 @@ window.gameState = {
   balls: [],
   running: false,
   paused: false,
+  angleFluctuation: 2,
 };
 
 let squareSize = 20;
@@ -59,6 +60,8 @@ function draw() {
     const deltaTime = lastFrameTime === 0 ? 0 : (currentTime - lastFrameTime) / 1000;
     lastFrameTime = currentTime;
 
+    const fluctuation = window.gameState.angleFluctuation || 0;
+
     for (let ball of window.gameState.balls) {
       ball.update(deltaTime);
 
@@ -66,19 +69,19 @@ function draw() {
 
       // Check wall collisions (ball boundary, not center)
       if (ball.position.x - radius <= 0) {
-        ball.velocity = reflectX(ball.velocity);
+        ball.velocity = reflectX(ball.velocity, fluctuation);
         ball.position.x = radius;
       }
       if (ball.position.x + radius >= grid.width) {
-        ball.velocity = reflectX(ball.velocity);
+        ball.velocity = reflectX(ball.velocity, fluctuation);
         ball.position.x = grid.width - radius;
       }
       if (ball.position.y - radius <= 0) {
-        ball.velocity = reflectY(ball.velocity);
+        ball.velocity = reflectY(ball.velocity, fluctuation);
         ball.position.y = radius;
       }
       if (ball.position.y + radius >= grid.height) {
-        ball.velocity = reflectY(ball.velocity);
+        ball.velocity = reflectY(ball.velocity, fluctuation);
         ball.position.y = grid.height - radius;
       }
 
@@ -139,8 +142,8 @@ function draw() {
           }
 
           if (collided) {
-            if (reflectXAxis) ball.velocity = reflectX(ball.velocity);
-            if (reflectYAxis) ball.velocity = reflectY(ball.velocity);
+            if (reflectXAxis) ball.velocity = reflectX(ball.velocity, fluctuation);
+            if (reflectYAxis) ball.velocity = reflectY(ball.velocity, fluctuation);
             cell.color = flipColor(cell.color);
           }
         }
@@ -159,6 +162,26 @@ function draw() {
       radius * 2 * squareSize // diameter = 2 * radius
     );
   }
+
+  // Update score bar
+  updateScoreBar(grid);
+}
+
+function updateScoreBar(grid) {
+  if (!grid) return;
+  
+  const blackCount = grid.cells.filter((c) => c.color === 'black').length;
+  const totalCount = grid.cells.length;
+  const blackPercent = Math.round((blackCount / totalCount) * 100);
+  const whitePercent = 100 - blackPercent;
+  
+  const blackPortion = document.getElementById('black-portion');
+  const blackScore = document.getElementById('blackScore');
+  const whiteScore = document.getElementById('whiteScore');
+  
+  if (blackPortion) blackPortion.style.width = `${blackPercent}%`;
+  if (blackScore) blackScore.textContent = `${blackPercent}%`;
+  if (whiteScore) whiteScore.textContent = `${whitePercent}%`;
 }
 
 function windowResized() {
