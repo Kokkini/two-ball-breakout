@@ -55,16 +55,15 @@ main {
   border: 1px solid #30363d;
 }
 
-.config h2 {
-  margin-bottom: 1rem;
-  font-size: 1.2rem;
-}
-
 .config label {
   display: block;
   margin-top: 0.75rem;
   font-weight: 500;
   font-size: 0.9rem;
+}
+
+.config label:first-child {
+  margin-top: 0;
 }
 
 .config input,
