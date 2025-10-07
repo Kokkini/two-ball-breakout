@@ -44,14 +44,20 @@ function draw() {
   const theme = themes[document.getElementById('theme').value] || themes.classic;
   const grid = window.gameState.grid;
 
-  // Calculate square size to fit canvas
-  squareSize = Math.min(width / grid.width, height / grid.height);
+  // Calculate square size to fit canvas (use floor to avoid subpixel gaps)
+  squareSize = Math.floor(Math.min(width / grid.width, height / grid.height));
 
   // Draw grid
   for (let cell of grid.cells) {
     fill(cell.color === 'black' ? theme.black : theme.white);
     noStroke();
-    rect(cell.x * squareSize, cell.y * squareSize, squareSize, squareSize);
+    // Add 1 pixel overlap to prevent gaps from subpixel rendering
+    rect(
+      Math.floor(cell.x * squareSize),
+      Math.floor(cell.y * squareSize),
+      squareSize + 1,
+      squareSize + 1
+    );
   }
 
   // Update and draw balls

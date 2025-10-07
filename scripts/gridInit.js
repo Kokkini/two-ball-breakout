@@ -62,8 +62,6 @@ function initializeBalls(
   grid,
   blackCount,
   whiteCount,
-  blackAngle,
-  whiteAngle,
   speed,
   seed = '',
   mode = 'random'
@@ -81,7 +79,8 @@ function initializeBalls(
     const shuffledWhite = whiteSquares.slice().sort(() => rng() - 0.5);
     for (let i = 0; i < Math.min(blackCount, shuffledWhite.length); i++) {
       const cell = shuffledWhite[i];
-      const rad = (blackAngle * Math.PI) / 180;
+      const randomAngle = rng() * 360; // Random angle between 0-360 degrees
+      const rad = (randomAngle * Math.PI) / 180;
       const velocity = { x: Math.cos(rad) * speed, y: Math.sin(rad) * speed };
       balls.push(new Ball('black', { x: cell.x + 0.5, y: cell.y + 0.5 }, velocity));
     }
@@ -90,7 +89,8 @@ function initializeBalls(
     const shuffledBlack = blackSquares.slice().sort(() => rng() - 0.5);
     for (let i = 0; i < Math.min(whiteCount, shuffledBlack.length); i++) {
       const cell = shuffledBlack[i];
-      const rad = (whiteAngle * Math.PI) / 180;
+      const randomAngle = rng() * 360; // Random angle between 0-360 degrees
+      const rad = (randomAngle * Math.PI) / 180;
       const velocity = { x: Math.cos(rad) * speed, y: Math.sin(rad) * speed };
       balls.push(new Ball('white', { x: cell.x + 0.5, y: cell.y + 0.5 }, velocity));
     }
@@ -100,7 +100,8 @@ function initializeBalls(
     const shuffledWhite = whiteSquares.slice().sort(() => rng() - 0.5);
     for (let i = 0; i < Math.min(blackCount, shuffledWhite.length); i++) {
       const cell = shuffledWhite[i];
-      const rad = (blackAngle * Math.PI) / 180;
+      const randomAngle = rng() * 360; // Random angle between 0-360 degrees
+      const rad = (randomAngle * Math.PI) / 180;
       const velocity = { x: Math.cos(rad) * speed, y: Math.sin(rad) * speed };
       balls.push(new Ball('black', { x: cell.x + 0.5, y: cell.y + 0.5 }, velocity));
     }
@@ -109,7 +110,8 @@ function initializeBalls(
     const shuffledBlack = blackSquares.slice().sort(() => rng() - 0.5);
     for (let i = 0; i < Math.min(whiteCount, shuffledBlack.length); i++) {
       const cell = shuffledBlack[i];
-      const rad = (whiteAngle * Math.PI) / 180;
+      const randomAngle = rng() * 360; // Random angle between 0-360 degrees
+      const rad = (randomAngle * Math.PI) / 180;
       const velocity = { x: Math.cos(rad) * speed, y: Math.sin(rad) * speed };
       balls.push(new Ball('white', { x: cell.x + 0.5, y: cell.y + 0.5 }, velocity));
     }

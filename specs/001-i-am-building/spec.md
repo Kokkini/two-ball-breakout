@@ -62,18 +62,18 @@ When creating this spec from a user prompt:
 
 ### Primary User Story
 As a player, I want to configure the grid initialization mode (classic left/right
-divide or random distribution), grid size, ball counts, ball starting angles,
-ball speed, angle fluctuation, and color theme, start the simulation, and watch
-black and white balls bounce within a grid while flipping square colors according
-to the rules so that the motion and visual transformation continue indefinitely
-with dynamic, unpredictable movement.
+divide or random distribution), grid size, ball counts, ball speed, angle
+fluctuation, and color theme, start the simulation, and watch black and white
+balls bounce within a grid while flipping square colors according to the rules
+so that the motion and visual transformation continue indefinitely with dynamic,
+unpredictable movement.
 
 ### Acceptance Scenarios
 1. **Given** a configured grid of W×H squares with exactly half black and half
    white squares, and at least one black ball and one white ball, **When** the
    simulation starts, **Then** each black ball is placed on a white square and
    each white ball on a black square, and balls begin moving at the configured
-   speed and starting angles.
+   speed with random starting angles (0-360 degrees).
 2. **Given** a black ball moving through the grid, **When** it crosses a white
    square interior, **Then** it moves freely without bouncing and the square's
    color remains unchanged.
@@ -90,15 +90,17 @@ with dynamic, unpredictable movement.
    color change.
 6. **Given** pre-game configuration is shown, **When** the player edits grid
    initialization mode, theme (selecting from multiple complementary color
-   palettes), grid size, angles, counts, speed, and angle fluctuation, **Then**
+   palettes), grid size, ball counts, speed, and angle fluctuation, **Then**
    the preview updates values and the Start button initializes a new simulation
    with those settings.
 7. **Given** classic initialization mode is selected, **When** the simulation
    starts, **Then** the grid is divided with left half all black and right half
-   all white, with balls randomly placed on their respective colored sides.
+   all white, with balls randomly placed on their respective colored sides with
+   random starting angles.
 8. **Given** random initialization mode is selected, **When** the simulation
    starts, **Then** the grid has a seeded random 50/50 distribution of black and
-   white squares with balls randomly placed on appropriate colors.
+   white squares with balls randomly placed on appropriate colors with random
+   starting angles.
 9. **Given** angle fluctuation is set to 0 degrees, **When** a ball collides
    with a wall or square, **Then** it bounces with perfect elastic reflection
    (angle of incidence equals angle of reflection).
@@ -110,6 +112,13 @@ with dynamic, unpredictable movement.
     a score indicator bar at the bottom of the canvas displays the current
     percentage of black and white squares with a visual bar (left portion black,
     right portion white) and percentage labels on each end.
+12. **Given** the page loads for the first time, **When** the page finishes
+    loading, **Then** the simulation automatically starts with default settings
+    without requiring the user to click the Start button.
+13. **Given** the simulation is running, **When** the user adjusts the ball
+    speed or angle fluctuation settings, **Then** the changes apply immediately
+    to the current simulation without resetting the game, preserving ball
+    positions and grid state.
 
 ### Edge Cases
 - Grid initialization modes: Classic (left/right divide) or Random (seeded distribution)
@@ -131,17 +140,18 @@ with dynamic, unpredictable movement.
 - **FR-001**: System MUST provide a pre-game configuration UI to select grid
   initialization mode (Classic or Random), color theme (from at least 7 options
   including Classic, Ocean, Sunset, Forest, Candy, Holiday, and Luxury), grid
-  width (squares), grid height (squares), starting angle for each ball color,
-  number of balls per color, ball speed, and angle fluctuation (0-45 degrees,
-  default 2 degrees).
+  width (squares), grid height (squares), number of balls per color, ball speed,
+  and angle fluctuation (0-45 degrees, default 2 degrees).
 - **FR-002**: On Start, the system MUST initialize a W×H grid according to the
   selected mode. Classic mode MUST create a left/right divide (left half black,
   right half white) using floor(width/2) as the midpoint. Random mode MUST
   create a seeded random 50/50 distribution; when W×H is odd, allow off-by-one.
 - **FR-003**: The system MUST place each black ball initially on a white square
   and each white ball on a black square, using random placement within available
-  squares of the appropriate color. Placement MUST avoid overlaps. If the number
-  of balls is greater than the number of starting squares, remove the excess balls.
+  squares of the appropriate color. Each ball MUST be assigned a random starting
+  angle (0-360 degrees) using the seeded random generator for reproducibility.
+  Placement MUST avoid overlaps. If the number of balls is greater than the
+  number of starting squares, remove the excess balls.
 - **FR-004**: Black ball motion: moves freely through white squares; bounces
   when the ball's boundary (radius 0.3 grid squares) contacts walls and black
   square boundaries; upon bouncing off a black square, that square MUST flip to
@@ -160,7 +170,8 @@ with dynamic, unpredictable movement.
   The Classic theme MUST use softened black/white (#2C2C2C/#E8E8E8) rather than
   pure black/white for reduced eye strain. Grid squares MUST be rendered without
   border lines, and balls MUST be rendered without strokes for a clean, seamless
-  appearance.
+  appearance. The rendering MUST prevent subpixel gaps between grid squares when
+  the screen is resized, ensuring no grid lines appear at any window size.
 - **FR-009**: Wall collisions MUST preserve speed and reflect angle according
   to axis-aligned elastic reflection, with optional random angle fluctuation
   applied as configured by the user.
@@ -182,6 +193,23 @@ with dynamic, unpredictable movement.
   represent black squares and the right portion for white squares, with the
   width of each portion proportional to the percentage of that color in the grid.
   Percentage labels MUST be displayed at each end of the bar.
+- **FR-016**: The system MUST automatically start the simulation with default
+  configuration settings immediately when the page finishes loading, without
+  requiring user interaction to click the Start button.
+- **FR-017**: The system MUST support live updates of ball speed and angle
+  fluctuation during an active simulation. When the user changes these settings
+  while the game is running, the system MUST apply the changes immediately
+  without resetting the simulation, preserving all ball positions, velocities
+  (direction), and grid state. Ball speed changes MUST scale velocity magnitude
+  while preserving direction.
+- **FR-018**: The system MUST use a dark theme for the user interface,
+  including dark backgrounds, light text, and appropriately contrasted UI
+  elements (inputs, buttons, containers) to reduce eye strain and provide a
+  modern aesthetic.
+- **FR-019**: The system MUST prevent users from setting ball speed to zero or
+  invalid values. If a user attempts to enter zero or an invalid speed value,
+  the system MUST automatically correct it to a valid minimum speed to ensure
+  balls continue moving.
 
 *Example of marking unclear requirements:*
 - **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]
@@ -190,11 +218,13 @@ with dynamic, unpredictable movement.
 ### Key Entities *(include if feature involves data)*
 - **GameSettings**: initMode (classic|random), gridWidth, gridHeight, theme
   (classic|ocean|sunset|forest|candy|holiday|luxury), blackBallCount,
-  whiteBallCount, blackStartAngle, whiteStartAngle, ballSpeed, angleFluctuation
-  (0-45 degrees, default 2), seed? (optional)
+  whiteBallCount, ballSpeed, angleFluctuation (0-45 degrees, default 2),
+  seed? (optional)
 - **Grid**: width, height, cells (color: black|white)
 - **Cell**: x, y, color
-- **Ball**: color (black|white), position (x,y), velocity (angle, speed), radius (0.3 grid squares)
+- **Ball**: color (black|white), position (x,y), velocity (x, y components),
+  radius (0.3 grid squares). Starting angle is randomly generated (0-360 degrees)
+  during initialization.
 
 ---
 
