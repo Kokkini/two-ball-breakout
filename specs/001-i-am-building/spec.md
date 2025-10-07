@@ -91,7 +91,7 @@ unpredictable movement.
 6. **Given** pre-game configuration is shown, **When** the player edits grid
    initialization mode, theme (selecting from multiple complementary color
    palettes), grid size, ball counts, speed, and angle fluctuation, **Then**
-   the preview updates values and the Start button initializes a new simulation
+   the values are updated and the "Start New" button initializes a new simulation
    with those settings.
 7. **Given** classic initialization mode is selected, **When** the simulation
    starts, **Then** the grid is divided with left half all black and right half
@@ -160,10 +160,10 @@ unpredictable movement.
   when the ball's boundary (radius 0.3 grid squares) contacts walls and white
   square boundaries; upon bouncing off a white square, that square MUST flip to
   black.
-- **FR-006**: The simulation MUST run continuously until paused or reset by the
-  user; there is no win/lose state.
-- **FR-007**: The system MUST allow pause/resume and reset to reconfigure
-  settings.
+- **FR-006**: The simulation MUST run continuously without pause functionality;
+  there is no win/lose state.
+- **FR-007**: The system MUST provide a single "Start New" button that allows
+  users to restart the simulation with new settings at any time.
 - **FR-008**: The system MUST render the grid and balls using the selected
   theme, ensuring sufficient contrast between squares and balls. All themes MUST
   use complementary colors that are visually appealing and not harsh on the eyes.

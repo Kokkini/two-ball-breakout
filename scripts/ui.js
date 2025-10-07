@@ -3,12 +3,9 @@
  */
 
 function setupUI() {
-  const startBtn = document.getElementById('startBtn');
-  const pauseBtn = document.getElementById('pauseBtn');
-  const resumeBtn = document.getElementById('resumeBtn');
-  const resetBtn = document.getElementById('resetBtn');
+  const startNewBtn = document.getElementById('startNewBtn');
 
-  startBtn.addEventListener('click', () => {
+  const startNewGame = () => {
     const gridWidth = parseInt(document.getElementById('gridWidth').value, 10);
     const gridHeight = parseInt(document.getElementById('gridHeight').value, 10);
     const blackBallCount = parseInt(document.getElementById('blackBallCount').value, 10);
@@ -36,37 +33,12 @@ function setupUI() {
     window.gameState.angleFluctuation = angleFluctuation;
     window.gameState.running = true;
     window.gameState.paused = false;
+  };
 
-    startBtn.disabled = true;
-    pauseBtn.disabled = false;
-    resumeBtn.disabled = true;
-  });
-
-  pauseBtn.addEventListener('click', () => {
-    window.gameState.paused = true;
-    pauseBtn.disabled = true;
-    resumeBtn.disabled = false;
-  });
-
-  resumeBtn.addEventListener('click', () => {
-    window.gameState.paused = false;
-    pauseBtn.disabled = false;
-    resumeBtn.disabled = true;
-  });
-
-  resetBtn.addEventListener('click', () => {
-    window.gameState.running = false;
-    window.gameState.paused = false;
-    window.gameState.grid = null;
-    window.gameState.balls = [];
-
-    startBtn.disabled = false;
-    pauseBtn.disabled = true;
-    resumeBtn.disabled = true;
-  });
+  startNewBtn.addEventListener('click', startNewGame);
 
   // Auto-start the game with default settings on page load
-  startBtn.click();
+  startNewGame();
 
   // Live update ball speed when changed
   const ballSpeedInput = document.getElementById('ballSpeed');
