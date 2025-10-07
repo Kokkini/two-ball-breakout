@@ -33,6 +33,11 @@ function setupUI() {
     window.gameState.angleFluctuation = angleFluctuation;
     window.gameState.running = true;
     window.gameState.paused = false;
+    
+    // Resize canvas to match grid dimensions
+    if (typeof resizeCanvasToGrid === 'function') {
+      resizeCanvasToGrid();
+    }
   };
 
   startNewBtn.addEventListener('click', startNewGame);

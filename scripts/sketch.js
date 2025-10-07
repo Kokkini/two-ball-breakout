@@ -24,10 +24,11 @@ const themes = {
 };
 
 function setup() {
-  const canvas = createCanvas(800, 600);
+  const canvas = createCanvas(600, 600);
   canvas.parent('p5-canvas');
   setupUI();
   frameRate(60);
+  resizeCanvasToGrid();
 }
 
 function draw() {
@@ -190,10 +191,25 @@ function updateScoreBar(grid) {
   if (whiteScore) whiteScore.textContent = `${whitePercent}%`;
 }
 
-function windowResized() {
+function resizeCanvasToGrid() {
+  if (!window.gameState.grid) return;
+  
+  const grid = window.gameState.grid;
   const container = document.getElementById('canvas-container');
-  const newWidth = container.clientWidth - 40;
-  const newHeight = Math.max(400, windowHeight * 0.7);
+  const maxWidth = container.clientWidth - 40;
+  const maxHeight = Math.max(400, windowHeight * 0.7);
+  
+  // Calculate the ideal square size to fit within container
+  const maxSquareSize = Math.floor(Math.min(maxWidth / grid.width, maxHeight / grid.height));
+  
+  // Calculate exact canvas size to fit the grid perfectly
+  const newWidth = maxSquareSize * grid.width;
+  const newHeight = maxSquareSize * grid.height;
+  
   resizeCanvas(newWidth, newHeight);
+}
+
+function windowResized() {
+  resizeCanvasToGrid();
 }
 

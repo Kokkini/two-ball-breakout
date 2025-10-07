@@ -210,6 +210,10 @@ unpredictable movement.
   invalid values. If a user attempts to enter zero or an invalid speed value,
   the system MUST automatically correct it to a valid minimum speed to ensure
   balls continue moving.
+- **FR-020**: The canvas MUST automatically resize to exactly match the grid
+  dimensions, maintaining the grid's aspect ratio without any gaps or extra
+  space. The canvas size MUST be calculated as an exact multiple of the grid
+  width and height to ensure perfect fit.
 
 *Example of marking unclear requirements:*
 - **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]
