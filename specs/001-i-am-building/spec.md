@@ -138,7 +138,7 @@ unpredictable movement.
 
 ### Functional Requirements
 - **FR-001**: System MUST provide a pre-game configuration UI to select grid
-  initialization mode (Classic or Random), color theme (from at least 7 options
+  initialization mode (Classic or Random, default: Random), color theme (from at least 7 options
   including Classic, Ocean, Sunset, Forest, Candy, Holiday, and Luxury), grid
   width (squares), grid height (squares), number of balls per color, ball speed,
   and angle fluctuation (0-45 degrees, default 2 degrees).
