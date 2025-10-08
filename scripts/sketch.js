@@ -14,13 +14,13 @@ let squareSize = 20;
 let lastFrameTime = 0;
 
 const themes = {
-  classic: { black: '#2C2C2C', white: '#E8E8E8', ball: '#D32F2F' },
-  ocean: { black: '#1B4965', white: '#BEE9E8', ball: '#FF6B35' },
-  sunset: { black: '#5C2E7E', white: '#FFBA49', ball: '#FF5E5B' },
-  forest: { black: '#2D4538', white: '#A8DADC', ball: '#E63946' },
-  candy: { black: '#D81159', white: '#FFBC42', ball: '#8F2D56' },
-  holiday: { black: '#C41E3A', white: '#2D5F3F', ball: '#FFD700' },
-  luxury: { black: '#1A1A1D', white: '#D4AF37', ball: '#C0C0C0' },
+  classic: { black: '#4A4A4A', white: '#ECECEC', ball: '#E57373' },
+  ocean: { black: '#3E6C89', white: '#CDEBED', ball: '#FF8E61' },
+  sunset: { black: '#7A4FA0', white: '#FFE08A', ball: '#FF7B7B' },
+  forest: { black: '#476C57', white: '#B7E2DC', ball: '#EF767A' },
+  candy: { black: '#E05A87', white: '#FFD676', ball: '#B85C8A' },
+  holiday: { black: '#3E8E41', white: '#EB7070', ball: '#FFE27A' },
+  luxury: { black: '#5A5A5A', white: '#FFE27A', ball: '#D9D9D9' },
 };
 
 function setup() {
